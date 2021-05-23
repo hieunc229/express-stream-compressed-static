@@ -64,11 +64,10 @@ export function serveStatic(staticPath: string, options?: StaticHandlerOptions) 
 
                 const cachedFilePath = getCacheFilePath({
                     ext, filePath, 
-                    queryString: req.url.split("?").pop(), 
+                    queryString: (!cacheExcludeQueryString && req.url.split("?").pop()) || undefined, 
                     savePath: cacheSavePath,
                     reqPath: req.path
                 })
-                // const cachedFilePath = `${cacheSavePath ? path.join(cacheSavePath, req.path) : filePath}.${ext}`;
 
                 if (cacheEnabled && fs.existsSync(cachedFilePath)) {
                     fs.createReadStream(cachedFilePath)
@@ -83,7 +82,6 @@ export function serveStatic(staticPath: string, options?: StaticHandlerOptions) 
                     .pipe(res)
 
                 if (cacheCompressedFiles) {
-                    console.log(`pipe`, cachedFilePath)
                     stream
                         .pipe(getCompressionPipe(supportBrotli))
                         .pipe(fs.createWriteStream(cachedFilePath))
