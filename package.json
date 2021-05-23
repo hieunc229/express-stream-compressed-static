@@ -1,7 +1,7 @@
 {
   "name": "express-stream-compressed-static",
-  "version": "0.0.1",
-  "description": "An expressjs middleware for compress and stream static files",
+  "version": "0.0.2",
+  "description": "An expressjs middleware, to compress and stream static files",
   "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
