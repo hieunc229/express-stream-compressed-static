@@ -3,7 +3,7 @@ import path from "path";
 import mime from "mime";
 
 import { Request, Response } from "express";
-import { getCompressionPipe, isBrotliSupport } from "./utils";
+import { getCacheFilePath, getCompressionPipe, isBrotliSupport } from "./utils";
 
 type StaticHandlerCacheOptions = {
     maxAge?: number,
@@ -14,37 +14,82 @@ type StaticHandlerCacheOptions = {
 
 type StaticHandlerOptions = {
     enableBrotli?: boolean,
-    cacheControl?: StaticHandlerCacheOptions
+    cacheControl?: StaticHandlerCacheOptions,
+    cacheCompressedFiles?: boolean | StaticHandlerCacheCompressedFilesOptions
+}
+
+type StaticHandlerCacheCompressedFilesOptions = {
+    savePath?: string,
+    excludeQueryString?: boolean
 }
 
 /**
  * Create the static files middleware handler
  * @param staticPath 
- * @param options 
+ * @param options
+ * @param {boolean} options.enableBrotli enable brotli compression (`true` by default)
+ * @param {boolean} options.cacheCompressedFiles enable caching compressed file to avoid being compress everytime the file requested
+ * @param {object} options.cacheControl set `Cache-Control` header options (options will result in a string with commas)
+ * @param {number} options.cacheControl.maxAge set `max-age` in cache control options
+ * @param {boolean} options.cacheControl.noTransform set `no-transform` in cache control options
+ * @param {boolean} options.cacheControl.public set `public` in cache control options
+ * @param {string} options.cacheControl.additionalValue set additonal value in cache control options
  * @returns 
  */
 export function serveStatic(staticPath: string, options?: StaticHandlerOptions) {
 
-    const { enableBrotli, cacheControl } = Object.assign({ enableBrotli: true }, options);
+    const { enableBrotli, cacheControl, cacheCompressedFiles } = Object.assign({ enableBrotli: true }, options);
+
+    let cacheOptions = typeof cacheCompressedFiles === "object" ? cacheCompressedFiles : {};
+    let cacheEnabled = !!cacheCompressedFiles;
+    let cacheSavePath = (cacheEnabled && cacheOptions.savePath) || "";
+    let cacheExcludeQueryString = cacheEnabled && cacheOptions.excludeQueryString;
 
     return function (req: Request, res: Response) {
         const filePath = path.join(staticPath, req.path);
 
         fs.stat(filePath, (err) => {
             if (!err) {
+
                 const supportBrotli = enableBrotli && isBrotliSupport(req);
+                const ext = supportBrotli ? 'br' : 'gzip';
 
                 res.set({
                     'Content-Type': mime.lookup(filePath),
                     'Transfer-Encoding': 'chunked',
-                    'Content-Encoding': supportBrotli ? 'br' : 'gzip'
+                    'Content-Encoding': ext
                 })
 
                 setCacheControl(res, cacheControl);
 
-                return fs.createReadStream(filePath)
+                const cachedFilePath = getCacheFilePath({
+                    ext, filePath, 
+                    queryString: req.url.split("?").pop(), 
+                    savePath: cacheSavePath,
+                    reqPath: req.path
+                })
+                // const cachedFilePath = `${cacheSavePath ? path.join(cacheSavePath, req.path) : filePath}.${ext}`;
+
+                if (cacheEnabled && fs.existsSync(cachedFilePath)) {
+                    fs.createReadStream(cachedFilePath)
+                        .pipe(res)
+                    return;
+                }
+
+                const stream = fs.createReadStream(filePath);
+
+                stream
                     .pipe(getCompressionPipe(supportBrotli))
                     .pipe(res)
+
+                if (cacheCompressedFiles) {
+                    console.log(`pipe`, cachedFilePath)
+                    stream
+                        .pipe(getCompressionPipe(supportBrotli))
+                        .pipe(fs.createWriteStream(cachedFilePath))
+                }
+
+                return;
             }
 
             return res.status(404).end();

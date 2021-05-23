@@ -7,7 +7,8 @@ Table of contents:
 2. [Installation](2-installation)
 3. [Usage Details](3-usage-details)
 4. [License (MIT)](4-license)
-5. [Question and Feedback](5-question-and-feedback)
+5. [Changelog][5-changelog]
+6. [Question and Feedback](6-question-and-feedback)
 
 ## 1. Usage example
 
@@ -60,6 +61,7 @@ $ yarn add express-stream-compressed-static
 **type StaticHandlerOptions**
 - `enableBrotli {boolean}`: enable brotli compress when client's browser supported. `true` by default.
 - `cacheControl {StaticHandlerCacheOptions | optional}`: cache control options
+- `cacheCompressedFiles {boolean | StaticHandlerCacheCompressedFilesOptions}`: cache compressed files to avoid re-compress files
 
 **type StaticHandlerCacheOptions**
 - `maxAge {number}`: add `max-age` to cache control options (in seconds)
@@ -68,10 +70,19 @@ $ yarn add express-stream-compressed-static
 - `additionalValue {string}`: add this value to cache control options
 *For example, when `maxAge`, `noTransform` and `public` is set, result will be `Cache-Control: max-age=xxxx, no-transform, public`
 
+**type StaticHandlerCacheCompressedFilesOptions**
+- `savePath {string}`: specify where the cache files will be stored. Otherwise, it will store file in same directory as the original file
+- `excludeQueryString {boolean}`: save compressed file name without queryString (`false` by default). For example, your file url is `path/bundle.js?v=0.0.1` and using brotli compression, when the value to `true`, the filename will be `save-path/bundle.js.br`. Otherwise, the filename will be `save-path/bundle.js?v=0.0.1.br`
+
 ## 4. License
 
 MIT
 
-## 5. Question and Feedback
+## 5. Changelog
+
+- [0.0.2] added `options.cacheCompressedFiles`
+- [0.0.1] publish inital version
+
+## 6. Question and Feedback
 
 Feel free to [start a thread](https://github.com/hieunc229/express-stream-compressed-static/issues/new) for question, or feedback.
