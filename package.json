@@ -1,0 +1,26 @@
+{
+  "name": "express-stream-compressed-static",
+  "version": "0.0.1",
+  "description": "An expressjs middleware for compress and stream static files",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hieunc229/express-stream-compressed-static.git"
+  },
+  "keywords": [
+    "express",
+    "middleware",
+    "stream",
+    "compress",
+    "static"
+  ],
+  "author": "Hieu C Nguyen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hieunc229/express-stream-compressed-static/issues"
+  },
+  "homepage": "https://github.com/hieunc229/express-stream-compressed-static#readme"
+}
