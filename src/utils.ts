@@ -22,7 +22,7 @@ export function getCacheFilePath(options: {
     let output = options.savePath ? path.join(options.savePath, options.reqPath) : options.filePath
 
     if (!options.excludeQueryString && options.queryString) {
-        output += options.queryString
+        output = `${output}.${options.queryString.replace(/\=/g, '-')}`
     }
 
     return `${output}.${options.ext}`;
