@@ -7,7 +7,7 @@ Table of contents:
 2. [Installation](2-installation)
 3. [Usage Details](3-usage-details)
 4. [License (MIT)](4-license)
-5. [Changelog][5-changelog]
+5. [Changelog](5-changelog)
 6. [Question and Feedback](6-question-and-feedback)
 
 ## 1. Usage example
