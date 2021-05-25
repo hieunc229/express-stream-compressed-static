@@ -3,12 +3,12 @@
 An expressjs middleware, to compress and stream static files. Support `brotli` and `gzip` compression (if brotli is enabled, and user's browser also support, brotli use be used)
 
 Table of contents:
-1. [Usage example](1-usage-example)
-2. [Installation](2-installation)
-3. [Usage Details](3-usage-details)
-4. [License (MIT)](4-license)
-5. [Changelog](5-changelog)
-6. [Question and Feedback](6-question-and-feedback)
+1. [Usage example](#1-usage-example)
+2. [Installation](#2-installation)
+3. [Usage Details](#3-usage-details)
+4. [License (MIT)](#4-license)
+5. [Changelog](#5-changelog)
+6. [Question and Feedback](#6-question-and-feedback)
 
 ## 1. Usage example
 
