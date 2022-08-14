@@ -19,10 +19,11 @@ export function getCacheFilePath(options: {
     excludeQueryString?: boolean
 }) {
 
-    let output = options.savePath ? path.join(options.savePath, options.reqPath) : options.filePath
+    // TODO: handle error when `filePath` directory doesn't exist
+    let output = options.savePath ? path.join(options.savePath, options.reqPath.replace(/[=/]/g, '-')) : options.filePath
 
     if (!options.excludeQueryString && options.queryString) {
-        output = `${output}.${options.queryString.replace(/\=/g, '-')}`
+        output = `${output}.${options.queryString.replace(/[=/]/g, '-')}`
     }
 
     return `${output}.${options.ext}`;
